@@ -19,6 +19,10 @@ module.exports = function (app, db) {
 		if(season && gender){
 			garments = await db.many('select * from garment where season = $1 AND gender = $2',[season, gender])
 		}
+
+		// if(season && gender === 'Unisex'){
+		// 	garments = await db.none(`delete * from garment where gender = $1`, [gender]);
+		// }
 		// add some sql queries that filter on gender & season
 		res.json({
 			data: garments
@@ -41,6 +45,7 @@ module.exports = function (app, db) {
 			const { description, price, img, season, gender } = params;
 			
 			await db.none(`update garment set gender = $1, description = $2, price = $3, img = $4, season = $5 where id=$6`, [gender,description,price,img,season, id])
+			await db.none(`delete * from garment where gender = $1`, [gender]);
 
 			res.json({
 				status: 'success'
@@ -112,9 +117,11 @@ module.exports = function (app, db) {
 		try {
 			const { gender } = req.query;
 			// delete the garments with the specified gender
-
+			const results = await db.none(`delete from garment where gender = $1`, [gender]);
+			console.log(results);
 			res.json({
-				status: 'success'
+				status: 'success',
+				data: results
 			})
 		} catch (err) {
 			// console.log(err);
