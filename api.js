@@ -118,13 +118,13 @@ module.exports = function (app, db) {
 			const { gender } = req.query;
 			// delete the garments with the specified gender
 			const results = await db.none(`delete from garment where gender = $1`, [gender]);
-			console.log(results);
+			// console.log(results);
 			res.json({
 				status: 'success',
 				data: results
 			})
 		} catch (err) {
-			// console.log(err);
+			console.log(err);
 			res.json({
 				status: 'success',
 				error : err.stack
